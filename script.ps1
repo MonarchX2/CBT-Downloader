@@ -63,9 +63,9 @@ if (Test-Path $ExtractPath) {
     }
     else {
         # Folder case: Google Drive folder
-        Write-Host "This is a Google Drive folder."
-        Write-Host "Please download the folder as a ZIP to your Downloads folder: $ZipPath"
-        Write-Host "Opening the browser in 5 seconds..."
+        Write-Host "This is a manual-download file. You need to download it manually."
+        Write-Host "Please save it to your Downloads folder."
+        Write-Host "The browser will open in 5 seconds..."
         Start-Sleep -Seconds 5
 
         Start-Process $Selected.URL
