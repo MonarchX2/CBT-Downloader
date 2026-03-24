@@ -5,16 +5,19 @@
 $Courses = @{
     "1" = @{
         Name = "CD0078 - Pumps and Pumping Operations"
+        Type = "file"
         URL  = "https://drive.google.com/uc?export=download&id=1xPWJnqwpVftOmzcTfrowxBJ8w5PI1qFZ"
         FolderName = "CD0078 - Pumps and Pumping Operations"
     }
     "2" = @{
         Name = "CD0017 - Steering Gear"
+        Type = "folder"
         URL  = "https://drive.google.com/uc?export=download&id=13_way_Eg7CrUC1ZA--luTYqAygVH7zJt"
         FolderName = "CD0017 - Steering Gear"
     }
     "3" = @{
         Name = "CD0118 - Steering Gear (RAM Type)"
+        Type = "folder"
         URL  = "https://drive.google.com/uc?export=download&id=1_QxJ9Dpex75CSBZcD9DZYwzQT91kRr_v"
         FolderName = "CD0118 - Steering Gear (RAM Type)"
     }
@@ -43,17 +46,44 @@ $ExtractPath = Join-Path $DownloadsPath $Selected.FolderName
 $ZipPath     = Join-Path $DownloadsPath ($Selected.FolderName + ".zip")
 
 # ==============================
-# Check Existing Folder
+# Handle Existing Folder or Folder Download
 # ==============================
 
 if (Test-Path $ExtractPath) {
     Write-Host "Existing folder found. Skipping download..."
 } else {
-    Write-Host "Downloading..."
-    Invoke-WebRequest -Uri $Selected.URL -OutFile $ZipPath -UseBasicParsing
 
-    Write-Host "Extracting..."
-    Expand-Archive -Path $ZipPath -DestinationPath $ExtractPath -Force
+    if ($Selected.Type -eq "file") {
+        # Direct download ZIP
+        Write-Host "Downloading file..."
+        Invoke-WebRequest -Uri $Selected.URL -OutFile $ZipPath -UseBasicParsing
+
+        Write-Host "Extracting..."
+        Expand-Archive -Path $ZipPath -DestinationPath $ExtractPath -Force
+    }
+    else {
+        # Folder case: Google Drive folder
+        Write-Host "This is a Google Drive folder."
+        Write-Host "Please download the folder as a ZIP to your Downloads folder: $ZipPath"
+        Write-Host "Opening the browser in 5 seconds..."
+        Start-Sleep -Seconds 5
+
+        Start-Process $Selected.URL
+
+        # Bring PowerShell window to front
+        $psWindow = Get-Process -Id $PID
+        Add-Type '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);' -Name WinAPI -Namespace User32
+        [User32.WinAPI]::SetForegroundWindow($psWindow.MainWindowHandle) | Out-Null
+
+        # Wait for the ZIP to appear
+        Write-Host "Waiting for the downloaded ZIP file..."
+        while (-not (Test-Path $ZipPath)) {
+            Start-Sleep -Seconds 2
+        }
+
+        Write-Host "ZIP file detected. Extracting..."
+        Expand-Archive -Path $ZipPath -DestinationPath $ExtractPath -Force
+    }
 }
 
 # ==============================
@@ -68,7 +98,7 @@ if ($ExePath) {
     Write-Host "Launching viewer.exe..."
     Start-Process -FilePath $ExePath.FullName
 } else {
-    Write-Host "viewer.exe not found. Opening folder..."
+    Write-Host "viewer.exe not found. Opening folder instead..."
     Start-Process $ExtractPath
 }
 
