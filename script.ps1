@@ -87,6 +87,29 @@ if (Test-Path $ExtractPath) {
 }
 
 # ==============================
+# Check folder vs ZIP size
+# ==============================
+function Get-FolderSize($folderPath) {
+    $size = (Get-ChildItem -Path $folderPath -Recurse -ErrorAction SilentlyContinue | 
+             Measure-Object -Property Length -Sum).Sum
+    return $size
+}
+
+$FolderSize = Get-FolderSize $ExtractPath
+$ZipSize    = (Get-Item $ZipPath -ErrorAction SilentlyContinue).Length
+
+if ($ZipSize -and $FolderSize) {
+    # Allow 5% difference due to compression overhead
+    $difference = [math]::Abs($FolderSize - $ZipSize) / $ZipSize
+    if ($difference -lt 0.05) {
+        Write-Host "Folder size is roughly equal to ZIP size. Deleting ZIP..."
+        Remove-Item $ZipPath -Force
+    } else {
+        Write-Host "Folder size differs significantly from ZIP. Keeping ZIP."
+    }
+}
+
+# ==============================
 # Launch viewer.exe
 # ==============================
 
