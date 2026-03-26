@@ -21,6 +21,24 @@ $Courses = @{
         URL  = "https://drive.google.com/uc?export=download&id=1_QxJ9Dpex75CSBZcD9DZYwzQT91kRr_v"
         FolderName = "CD0118 - Steering Gear (RAM Type)"
     }
+    "4" = @{
+        Name = "CD0027 - Ballast Water Management"
+        Type = "file"
+        URL  = "https://drive.google.com/uc?export=download&id=1-ZJLL_-EMK-psy9ul3j13hcIie2tR8nh"
+        FolderName = "CD0027 - Ballast Water Management"
+    }
+    "5" = @{
+        Name = "CD0046 - Auxiliary Boiler Plant"
+        Type = "file"
+        URL  = "https://drive.google.com/uc?export=download&id=1jBJHIHw7JoLH0YpAQm6t0iIX-C9alJmJ"
+        FolderName = "CD0046 - Auxiliary Boiler Plant"
+    }
+    "6" = @{
+        Name = "CD0091 - Incinerators"
+        Type = "file"
+        URL  = "https://drive.google.com/uc?export=download&id=1N_ApVKZqnT2pqf6EQD5gqXnSF5rbJ3Lp"
+        FolderName = "CD0091 - Incinerators"
+    }
 }
 
 $DownloadsPath = [Environment]::GetFolderPath("UserProfile") + "\Downloads"
